@@ -1,26 +1,40 @@
 version: '3'
 services:
 
-# this one is built locally
+# scrapy container
   progpaint_scrapy:
-    build: ./progpaint
-    volumes:
-      - ./progpaint/data:/usr/src/app/data
+    build: ./scrapy
     environment:
       - MONGO_URL=mongodb://progpaint_mongo:27017/progpaint
     links:
       - progpaint_mongo
+    volumes:
+      - ./media/:/usr/src/app/data
 
+# stores all scraped documents (for imgs: only url, no bin data)
   progpaint_mongo:
     image: mongo:latest
     environment:
       - MONGO_DATA_DIR=/data/db
-#       - MONGO_LOG_DIR=/dev/null
     volumes:
-      - ./data/db:/data/db
+      - ./mongo/db:/data/db
     ports:
       - 27017:27017
-    # command: mongod --smallfiles --logpath=/dev/null # --quiet
-    command: mongod --smallfiles 
+    command: mongod --smallfiles
 
+# serves static files via http
+  progpaint_media:
+    build: ./media
+    volumes:
+      - ./media/:/var/www/media
+    ports:
+      - 8080:80
 
+# demo application, visualizes results
+  progpaint_demo:
+    build: ./demo
+    ports:
+      - 80:80
+    links:
+      - progpaint_mongo
+      - progpaint_media
