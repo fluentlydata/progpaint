@@ -1,0 +1,26 @@
+version: '3'
+services:
+
+# this one is built locally
+  progpaint_scrapy:
+    build: ./progpaint
+    volumes:
+      - ./progpaint/data:/usr/src/app/data
+    environment:
+      - MONGO_URL=mongodb://progpaint_mongo:27017/progpaint
+    links:
+      - progpaint_mongo
+
+  progpaint_mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+#       - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    # command: mongod --smallfiles --logpath=/dev/null # --quiet
+    command: mongod --smallfiles 
+
+
