@@ -2,14 +2,15 @@ version: '3'
 services:
 
 # scrapy container
-  progpaint_scrapy:
-    build: ./scrapy
+  progpaint_scraper:
+    build: ./scraper
     environment:
       - MONGO_URL=mongodb://progpaint_mongo:27017/progpaint
     links:
       - progpaint_mongo
     volumes:
       - ./media/:/usr/src/app/data
+    command: scrapy crawl complete
 
 # stores all scraped documents (for imgs: only url, no bin data)
   progpaint_mongo:
