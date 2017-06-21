@@ -11,10 +11,10 @@ class TestSpider(scrapy.Spider):
           a = [ x.lstrip().rstrip() for x in txtarray ]
           return " ".join(a)
 
-        # probably better:
-        # Selector(response=r).xpath('//section[@class="post"]/node()').extract()
-        for p in Selector(response=response).xpath('//article//node()').extract():
-            print(p)
+        # iterate through every post
+        for p in Selector(response=response).xpath('//section[@class="post"]/node()').extract():
+        # for p in Selector(response=response).xpath('//article//node()').extract():
+            # print(p)
             yield {
                 'img': Selector(text=p).css('img::attr("src")').extract_first(),
                 'text': strip_join(Selector(text=p).xpath('//text()').extract()), # contains too many \r and \n

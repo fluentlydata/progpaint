@@ -27,12 +27,12 @@ class MongoPipeline(object):
 
 
     def process_item(self, item, spider):
-        # later.. check validity and drop if duplicate
-        # valid=True
-        # if {condition}
-        # raise DropItem("Duplicate ({0})".format(some_data_string))
-
-        if spider.name == 'complete':
-          # self.model.insert(dict(item))
+        if item['img'] is None:
+          raise DropItem("Empty item ({0})".format(item['img']))
+        else:
           print(item)
+        
+        # if spider.name == 'complete':
+          # self.model.insert(dict(item))
+          
         return item
