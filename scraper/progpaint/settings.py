@@ -66,14 +66,22 @@ ROBOTSTXT_OBEY = True
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'progpaint.pipelines.MongoPipeline': 200,
+    'scrapy.pipelines.images.ImagesPipeline': 1,
+}
+
+# see https://doc.scrapy.org/en/latest/topics/media-pipeline.html
+IMAGES_STORE = '/usr/src/app/data'
+
+IMAGES_THUMBS = {
+    'small': (50, 50),
+    'big': (270, 270),
 }
 
 # mongodb settings
 MONGODB_SERVER = "progpaint_mongo"
 MONGODB_PORT = 27017
 MONGODB_DB = "progpaint"
-MONGODB_COLLECTION_MODEL = "model"
-MONGODB_COLLECTION_PROFILE = "profile"
+MONGODB_COLLECTION_POSTS = "posts"
 
 
 

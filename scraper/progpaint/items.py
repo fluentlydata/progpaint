@@ -6,8 +6,9 @@
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
-from scrapy.item import Item, Field
 
-class TestItem(Item):
-    title = Field()
-    url = Field()
+class PostItem(scrapy.Item):
+    image_urls = scrapy.Field()
+    images     = scrapy.Field()
+    text       = scrapy.Field()
+    ts         = scrapy.Field()

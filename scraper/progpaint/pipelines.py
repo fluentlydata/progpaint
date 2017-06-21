@@ -22,17 +22,14 @@ class MongoPipeline(object):
             settings['MONGODB_PORT']
         )
         db = connection[settings['MONGODB_DB']]
-        self.model = db[settings['MONGODB_COLLECTION_MODEL']]
-        self.profile = db[settings['MONGODB_COLLECTION_PROFILE']]
+        self.posts = db[settings['MONGODB_COLLECTION_POSTS']]
 
 
     def process_item(self, item, spider):
-        if item['img'] is None:
-          raise DropItem("Empty item ({0})".format(item['img']))
+        if len(item['image_urls']) is 0:
+          raise DropItem("Dropping empty item.")
         else:
-          print(item)
-        
-        # if spider.name == 'complete':
-          # self.model.insert(dict(item))
+          # print(item) # looks good 
+          self.posts.insert(dict(item))
           
         return item

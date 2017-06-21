@@ -1,5 +1,8 @@
 import scrapy
+import time
+import datetime
 from scrapy.selector import Selector
+from progpaint.items import PostItem
 
 class TestSpider(scrapy.Spider):
     name = 'complete'
@@ -7,36 +10,23 @@ class TestSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        # timestamp
+        tt = time.time()
+        ts = datetime.datetime.fromtimestamp(tt).strftime('%Y-%m-%d %H:%M:%S')
+
         def strip_join(txtarray):
           a = [ x.lstrip().rstrip() for x in txtarray ]
           return " ".join(a)
 
+        # p=post text
+        def create_item(p):
+          item = PostItem()
+          item['image_urls'] = Selector(text=p).css('img::attr("src")').extract()
+          item['text']       = strip_join(Selector(text=p).xpath('//text()').extract()) # contains too many \r and \n
+          item['ts']         = ts
+          return item
+
         # iterate through every post
         for p in Selector(response=response).xpath('//section[@class="post"]/node()').extract():
-        # for p in Selector(response=response).xpath('//article//node()').extract():
-            # print(p)
-            yield {
-                'img': Selector(text=p).css('img::attr("src")').extract_first(),
-                'text': strip_join(Selector(text=p).xpath('//text()').extract()), # contains too many \r and \n
-            }
+            yield create_item(p)
 
-            # xpath('//figcaption[@class="caption"]//text()')
-
-        # and extract
-        # 1.
-
-        # 2. select the pre-tag ('import java.lang.reflect.*;')
-        #
-
-        # 3. select the remaining p-tags
-        #
-
-        # questions = Selector(response).xpath('//div[@class="summary"]/h3')
-
-        # for question in questions:
-        #     item = TestItem()
-        #     item['title'] = question.xpath(
-        #         'a[@class="question-hyperlink"]/text()').extract()[0]
-        #     item['url'] = question.xpath(
-        #         'a[@class="question-hyperlink"]/@href').extract()[0]
-        #     yield item
