@@ -10,7 +10,7 @@ services:
       - progpaint_mongo
     volumes:
       - ./media/:/usr/src/app/data
-    command: scrapy crawl complete
+    command: scrapy # crawl complete
 
 # stores all scraped documents (for imgs: only url, no bin data)
   progpaint_mongo:
@@ -29,13 +29,13 @@ services:
     volumes:
       - ./media/:/var/www/media
     ports:
-      - 8080:80
+      - 8081:8081
 
 # demo application, visualizes results
   progpaint_demo:
     build: ./demo
     ports:
-      - 80:80
+      - 80:8080
     links:
       - progpaint_mongo
       - progpaint_media
