@@ -10,6 +10,8 @@ const express = require('express');
 const PORT = 8080;
 const mongoURL = 'mongodb://progpaint_mongo:27017/progpaint'
 
+var db = {};
+
 // App
 const app = express();
 
@@ -18,6 +20,23 @@ var requestSettings = {
     method: 'GET',
     encoding: null
 };
+
+var getPosts = function(callback) {
+  findDocuments(db, function(posts) {
+        // don't do this here, reshape the posts in a separate R container
+        var ps = []
+        posts.forEach(function(p) {
+            var p2 = {}
+            p2["_id"] = p["_id"];
+            p2["text"] = p["text"];
+            p2["ts"] = p["ts"];
+            p2["url"] = "http://localhost:8081/" + p["images"][0]["path"];
+            ps.push(p2);
+        });
+        // res.send(ps);
+		callback(ps);
+      }, 'posts');
+}
 
 var findDocuments = function(db, callback, collection_name) {
   // Get the documents collection
@@ -31,8 +50,20 @@ var findDocuments = function(db, callback, collection_name) {
   });
 }
 
+var returnWebpage = function(dynamicContent) {
+  return '<html><body><p>' + dynamicContent + '</p></body></html>';
+}
+
 app.get('/', function(req,res) {
-  res.send("/post will be more interesting");
+  getPosts(function(posts) {
+    var dc = "";
+    posts.forEach(function(p) {
+		dc += "<div>"
+		dc += "<img src='" + p["url"] + " '>"		
+		dc += "</div>"
+    });
+	res.send(returnWebpage(dc));
+  });
 });
 
 app.get('/testrequest', function (req, res) {
@@ -63,6 +94,16 @@ app.get('/post', function(req, res) {
     });
 });
 
-app.listen(PORT);
-console.log('Running on http://localhost:' + PORT);
+MongoClient.connect(mongoURL, function(err, db_) {
+  if (err) {
+    console.log(err);
+    return;
+  }
+
+  db = db_;
+
+  app.listen(PORT);
+  console.log('Running on http://localhost:' + PORT);
+
+});
 

@@ -31,10 +31,9 @@ services:
     ports:
       - 8081:8081
 
-# api for the demo application
-# this abstracts the access to the mongodb
-  progpaint_api:
-    build: ./api
+# client visualizing the scraped data
+  progpaint_client:
+    build: ./client
     ports:
       - 8080:8080
     links:
